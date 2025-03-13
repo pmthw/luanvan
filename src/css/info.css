@@ -1,0 +1,95 @@
+
+.info-background {
+    background-image: url('../img/background.jpg'); 
+    background-size: cover;
+    position: absolute; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+.info-product-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #bfd6ee; 
+    border-radius: 10px; /* Bo góc */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
+    max-width: 800px; 
+    margin: 0px auto; 
+    position: relative; 
+    overflow: hidden; 
+  }
+
+  
+  .back-button {
+    top: 15px;
+    right: 15px;
+    padding: 8px 15px;
+    margin-left: 30px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    position: relative;
+    z-index: 10; 
+  }
+
+  .back-button:hover {
+    background-color: #c0392b;
+  }
+  
+  .info-h1 {
+    color: #0f1069; 
+    font-size: 2.5rem; 
+    text-align: center;
+    margin-bottom: 20px; 
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); 
+  }
+  
+
+  .table {
+    width: 100%; 
+    border-collapse: collapse; 
+  }
+  
+  .table th {
+    background-color: #bfd6ee; 
+    color: #000000; 
+    padding: 12px;
+    text-align: left; 
+    width:250px;
+  }
+  
+  .table td {
+    padding: 10px;
+    font-size: 1em;
+    border-radius: 10px;
+    border-bottom: 1px solid #dddddd;
+  }
+  
+  .table tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .text-danger {
+    color: #dc3545; 
+    text-align: center;
+    margin-top: 20px; 
+  }
+  
+
+  @media (max-width: 600px) {
+    .info-h1 {
+      font-size: 2rem; 
+    }
+  
+    .table th, .table td {
+      padding: 8px; 
+    }
+  }
+  

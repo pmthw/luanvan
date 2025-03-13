@@ -1,0 +1,59 @@
+
+.container-fluid {
+  padding: 20px;
+}
+
+.view-product-container {
+  background-image: url('../img/background.jpg'); 
+  background-size: cover;
+  background-position: center;
+  padding: 40px;
+  background-attachment: fixed;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  height:100%; 
+  min-height:100vh; 
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse; 
+}
+th,
+td {
+  text-align: left; 
+  word-wrap: break-word;
+  border: none;
+}
+
+.thead-light th {
+  background-color: #428bca; 
+  color: #fff;
+  font-size: 16px;
+  padding: 10px 15px;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(91, 26, 212, 0.05); 
+}
+.text-center{
+  color: white;
+}
+tbody tr td {
+  font-size: 14px;
+}
+.nha-san-xuat{
+  color: #1affd5;
+}
+
+@media (max-width: 768px) {
+  th,
+  td {
+    font-size: 12px;
+    padding: 8px;
+  }
+}
+.no-products-message{
+  color:aliceblue;
+  text-align: center;
+}
