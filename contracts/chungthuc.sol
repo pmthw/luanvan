@@ -32,7 +32,7 @@ contract XacThucSanPham {
     );
     event ProductApproved(bytes32 productHash);
     event ProductDeleted(bytes32 productHash);
-    
+
     constructor() {
         admin = msg.sender;
     }
@@ -120,7 +120,7 @@ contract XacThucSanPham {
             p.trangThai
         );
     }
-    
+
     function getProductsByNongHoSX(string memory _nonghoSX) public view returns (
         bytes32[] memory,
         Product[] memory
@@ -144,6 +144,31 @@ contract XacThucSanPham {
                 keccak256(abi.encodePacked(products[productHashes[i]].nonghoSX)) 
                 == keccak256(abi.encodePacked(_nonghoSX))
             ) {
+                productHashList[index] = productHashes[i];
+                productList[index] = products[productHashes[i]];
+                index++;
+            }
+        }
+        return (productHashList, productList);
+    }
+
+    function getProductsAwait() public view returns (
+        bytes32[] memory,
+        Product[] memory
+    ) {
+        uint count = 0;
+        for (uint i = 0; i < productHashes.length; i++) {
+            if (products[productHashes[i]].trangThai == TrangThai.PENDING) {
+                count++;
+            }
+        }
+
+        bytes32[] memory productHashList = new bytes32[](count);
+        Product[] memory productList = new Product[](count);
+        uint index = 0;
+
+        for (uint i = 0; i < productHashes.length; i++) {
+            if (products[productHashes[i]].trangThai == TrangThai.PENDING) {
                 productHashList[index] = productHashes[i];
                 productList[index] = products[productHashes[i]];
                 index++;

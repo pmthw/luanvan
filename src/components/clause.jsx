@@ -1,56 +1,60 @@
 // components/TermsOfUse.js
-import React from 'react';
+import React from "react";
 
 const TermsOfUse = () => {
   return (
-    <div className="terms-of-use">
-      <h1>ĐIỀU KHOẢN SỬ DỤNG</h1>
-      
-      <h2 className="student-strong">1. Giới thiệu</h2>
-      <p>
-        Chào mừng bạn đến với Blockchain chứng thực nguồn gốc Quýt Hồng Lai Vung. Việc sử dụng dịch vụ của chúng tôi đồng nghĩa với việc bạn đồng ý với các điều khoản dưới đây.
-      </p>
-      
-      <h2 className="student-strong">2. Quyền và nghĩa vụ của người dùng</h2>
-      <p>
-        Bạn có quyền truy cập vào dịch vụ của chúng tôi và có trách nhiệm tuân thủ các quy định đã đề ra.
-      </p>
-
-      <p>
-        Bạn có nghĩa vụ bảo vệ thông tin đăng nhập của mình và thông báo ngay cho chúng tôi nếu có bất kỳ hành vi truy cập trái phép nào.
-      </p>
-
-      <h2 className="student-strong">3. Bảo mật thông tin</h2>
-      <p>
-        Chúng tôi cam kết bảo vệ thông tin cá nhân của bạn và sẽ không chia sẻ với bên thứ ba mà không có sự đồng ý của bạn.
-      </p>
-      <p>
-        Chúng tôi sử dụng các biện pháp bảo mật hợp lý để bảo vệ thông tin cá nhân của bạn khỏi việc truy cập, sử dụng hoặc tiết lộ trái phép.
-      </p>
-      
-      <h2 className="student-strong">4. Quy định về sử dụng dịch vụ</h2>
-      <p>
-        Bạn đồng ý không sử dụng dịch vụ của chúng tôi cho bất kỳ mục đích nào trái pháp luật hoặc không phù hợp.
-      </p>
-      <p>
-        Bạn không được phép can thiệp vào hệ thống hoặc cố gắng truy cập vào dữ liệu của người dùng khác.
-      </p>
-
-      <h2 className="student-strong">5. Quyền sở hữu trí tuệ</h2>
-      <p>
-        Tất cả nội dung và tài liệu trên dịch vụ của chúng tôi đều thuộc quyền sở hữu trí tuệ của chúng tôi hoặc bên thứ ba.
-      </p>
-      <p>
-        Bạn không được sao chép, phân phối hoặc sử dụng bất kỳ nội dung nào mà không có sự đồng ý của chúng tôi.
-      </p>
-
-      <h2 className="student-strong">6. Thay đổi điều khoản</h2>
-      <p>
-        Chúng tôi có quyền cập nhật hoặc thay đổi các điều khoản này bất kỳ lúc nào mà không cần thông báo trước.
-      </p>
-      <p>
-        Bạn nên thường xuyên kiểm tra trang này để nắm bắt các thay đổi. Việc bạn tiếp tục sử dụng dịch vụ sau khi có thay đổi đồng nghĩa với việc bạn đồng ý với các điều khoản mới.
-      </p>
+    <div className="container py-4">
+      <div className="card shadow">
+        <div className="card-body">
+          
+          <h1 className="text-center fw-bold mb-4">ĐIỀU KHOẢN SỬ DỤNG</h1>
+          
+          <section className="mb-4">
+            <h2 className="fs-4 fw-semibold">1. Giới thiệu</h2>
+            <p>
+              Chào mừng bạn đến với nền tảng Chứng thực nguồn gốc Quýt Hồng Lai Vung. Việc sử dụng dịch vụ của chúng tôi đồng nghĩa với việc bạn đồng ý tuân thủ các điều khoản dưới đây.
+            </p>
+          </section>
+          
+          <section className="mb-4">
+            <h2 className="fs-4 fw-semibold">2. Quyền và nghĩa vụ của người dùng</h2>
+            <ul className="ps-4">
+              <li>Bạn có quyền truy cập và sử dụng dịch vụ theo đúng quy định.</li>
+              <li>Bạn chịu trách nhiệm bảo vệ thông tin đăng nhập và báo cáo hành vi truy cập trái phép.</li>
+              <li>Không sử dụng dịch vụ vào mục đích vi phạm pháp luật hoặc gây ảnh hưởng đến hệ thống.</li>
+            </ul>
+          </section>
+          
+          <section className="mb-4">
+            <h2 className="fs-4 fw-semibold">3. Bảo mật thông tin</h2>
+            <p>
+              Chúng tôi cam kết bảo vệ thông tin cá nhân của bạn và không chia sẻ với bên thứ ba nếu không có sự đồng ý của bạn, trừ khi pháp luật yêu cầu.
+            </p>
+          </section>
+          
+          <section className="mb-4">
+            <h2 className="fs-4 fw-semibold">4. Quy định về sử dụng dịch vụ</h2>
+            <ul className="ps-4">
+              <li>Không sử dụng dịch vụ vào mục đích trái pháp luật.</li>
+              <li>Không can thiệp vào hệ thống hoặc truy cập dữ liệu người dùng khác trái phép.</li>
+            </ul>
+          </section>
+          
+          <section className="mb-4">
+            <h2 className="fs-4 fw-semibold">5. Quyền sở hữu trí tuệ</h2>
+            <p>
+              Tất cả nội dung trên nền tảng thuộc quyền sở hữu trí tuệ của chúng tôi hoặc bên liên quan. Không sao chép, phân phối nếu không có sự đồng ý bằng văn bản.
+            </p>
+          </section>
+          
+          <section className="mb-4">
+            <h2 className="fs-4 fw-semibold">6. Thay đổi điều khoản</h2>
+            <p>
+              Chúng tôi có quyền sửa đổi điều khoản bất kỳ lúc nào mà không cần thông báo trước. Việc tiếp tục sử dụng dịch vụ đồng nghĩa với việc bạn chấp nhận điều khoản mới.
+            </p>
+          </section>
+        </div>
+      </div>
     </div>
   );
 };

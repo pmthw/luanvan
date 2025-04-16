@@ -5,65 +5,53 @@ import XacThucSanPhamContract from '../contracts/XacThucSanPham.json';
 import { Helmet } from 'react-helmet-async';
 import '../css/ViewProduct.css';
 
-const ViewProduct = () => {
+const ViewProduct = ({toggleViewProducts}) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const nonghoSX = queryParams.get('nonghoSX');
   const [, setProductHashes] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false); // Trạng thái kiểm tra admin
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      if (!nonghoSX) {
-        console.error('Nông hộ sản xuất không được cung cấp.');
-        setLoading(false);
-        return;
-      }
-      if (window.ethereum) {
-        const web3 = new Web3(window.ethereum);
-        const networkId = await web3.eth.net.getId();
-        const deployedNetwork = XacThucSanPhamContract.networks[networkId];
-        const contract = new web3.eth.Contract(
-          XacThucSanPhamContract.abi,
-          deployedNetwork && deployedNetwork.address
-        );
-        try {
-          const hashes = await contract.methods.getProductsByNongHoSX(nonghoSX).call();
-          setProductHashes(hashes);
-          console.log(hashes);
-
-          // Lấy thông tin sản phẩm chi tiết và trạng thái sản phẩm
-          const fetchedProducts = hashes[0];
-          const productsDetails = await Promise.all(
-            fetchedProducts.map(hash => contract.methods.getProduct(hash).call())
-          );
-          
-          // Cập nhật trạng thái của từng sản phẩm vào state
-          const updatedProducts = productsDetails.map((product) => ({
-            ...product,
-            trangThai: product.trangThai || 'PENDING', // Nếu không có trạng thái, mặc định là 'PENDING'
-          }));
-          
-          setProducts(updatedProducts);
-
-          // Kiểm tra xem địa chỉ ví có phải là admin không
-          const adminAddress = await contract.methods.admin().call();
-          const accounts = await web3.eth.getAccounts();
-          if (accounts[0] === adminAddress) {
-            setIsAdmin(true); // Nếu địa chỉ ví của người dùng là admin, thiết lập trạng thái admin
-          }
-        } catch (error) {
-          console.error('Error fetching products:', error);
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-
     fetchProducts();
   }, [nonghoSX]);
+
+  const fetchProducts = async () => {
+    if (window.ethereum) {
+      const web3 = new Web3(window.ethereum);
+      const networkId = await web3.eth.net.getId();
+      const deployedNetwork = XacThucSanPhamContract.networks[networkId];
+      const contract = new web3.eth.Contract(
+        XacThucSanPhamContract.abi,
+        deployedNetwork && deployedNetwork.address
+      );
+      try {
+        const hashes = await contract.methods.getProductsAwait().call();
+        setProductHashes(hashes);
+
+        const fetchedProducts = hashes[0];
+        const productsDetails = await Promise.all(
+          fetchedProducts.map(hash => contract.methods.getProduct(hash).call())
+        );
+        
+        // Filter products with pending status (trangThai = 0)
+        const pendingProducts = productsDetails.filter(product => parseInt(product[9]) === 0);
+        setProducts(pendingProducts);
+
+        const adminAddress = await contract.methods.admin().call();
+        const accounts = await web3.eth.getAccounts();
+        if (accounts[0] === adminAddress) {
+          setIsAdmin(true);
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   const handleApprove = async (maSanPham, nonghoSX) => {
     if (window.ethereum) {
@@ -77,28 +65,23 @@ const ViewProduct = () => {
   
       const accounts = await web3.eth.getAccounts();
       try {
-        // Tạo productHash từ maSanPham và nonghoSX
-        const productHash = maSanPham + nonghoSX; // Kết hợp mã sản phẩm và Nông hộ sản xuất
-        const productHashBytes32 = web3.utils.keccak256(web3.utils.asciiToHex(productHash)); // Chuyển thành bytes32
+        const productHash = maSanPham + nonghoSX;
+        const productHashBytes32 = web3.utils.keccak256(web3.utils.asciiToHex(productHash));
   
-        console.log('Approving product hash:', productHashBytes32); // Kiểm tra giá trị đã chuyển đổi
-  
-        // Gửi transaction để duyệt sản phẩm
         await contract.methods.approveProduct(productHashBytes32).send({ from: accounts[0] });
         alert('Sản phẩm đã được duyệt');
   
-        // Cập nhật trạng thái sản phẩm
         setProducts((prevProducts) =>
-          prevProducts.map((product) =>
-            product[3] === maSanPham ? { ...product, trangThai: 1 } : product
-          )
+          prevProducts.filter((product) => product[3] !== maSanPham)
         );
-        window.location.reload(); 
+        toggleViewProducts();
+        fetchProducts();
       } catch (error) {
         console.error('Error approving product:', error);
       }
     }
   };
+
   const handleDelete = async (maSanPham, nonghoSX) => {
     if (window.ethereum) {
       const web3 = new Web3(window.ethereum);
@@ -111,27 +94,23 @@ const ViewProduct = () => {
   
       const accounts = await web3.eth.getAccounts();
       try {
-        // Tạo productHash từ maSanPham và nonghoSX
-        const productHash = maSanPham + nonghoSX; // Kết hợp mã sản phẩm và Nông hộ sản xuất
-        const productHashBytes32 = web3.utils.keccak256(web3.utils.asciiToHex(productHash)); // Chuyển thành bytes32
+        const productHash = maSanPham + nonghoSX;
+        const productHashBytes32 = web3.utils.keccak256(web3.utils.asciiToHex(productHash));
   
-        console.log('Deleting product hash:', productHashBytes32); // Kiểm tra giá trị đã chuyển đổi
-  
-        // Gửi transaction để xóa sản phẩm
         await contract.methods.deleteProduct(productHashBytes32).send({ from: accounts[0] });
         alert('Sản phẩm đã được xóa');
   
-        // Cập nhật danh sách sản phẩm
         setProducts((prevProducts) =>
           prevProducts.filter((product) => product[3] !== maSanPham)
         );
+        toggleViewProducts();
+        fetchProducts();
       } catch (error) {
         console.error('Error deleting product:', error);
       }
     }
   };
     
-  
   return (
     <div className="container-fluid p-5">
       <div 
@@ -141,22 +120,23 @@ const ViewProduct = () => {
           boxShadow: '0 6px 15px rgba(0, 0, 0, 0.1)'
         }}
       >
-        <title>Danh Sách Sản Phẩm</title>
+        <title>Danh Sách Sản Phẩm Chờ Duyệt</title>
 
         <h2 className="text-center text-2xl font-bold mb-6 text-white">
-          Nông hộ sản xuất: <span className="text-white">{nonghoSX}</span>
+          Sản phẩm chờ duyệt của nông hộ: <span className="text-white">{nonghoSX}</span>
         </h2>
 
         {loading ? (
           <p className="no-products-message text-center text-white">Đang tải dữ liệu...</p>
         ) : products.length === 0 ? (
-          <p className="no-products-message">Nông hộ sản xuất chưa thêm sản phẩm nào cả!</p>
+          <p className="no-products-message">Không có sản phẩm nào đang chờ duyệt!</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full border-collapse table-hover">
               <thead className="thead-light">
                 <tr>
                   <th className="text-left p-[10px_15px] bg-[#428bca] text-white text-base">STT</th>
+                  <th className="text-left p-[10px_15px] bg-[#428bca] text-white text-base">Nhà sản xuất</th>
                   <th className="text-left p-[10px_15px] bg-[#428bca] text-white text-base">Email liên hệ</th>
                   <th className="text-left p-[10px_15px] bg-[#428bca] text-white text-base">Mã sản phẩm</th>
                   <th className="text-left p-[10px_15px] bg-[#428bca] text-white text-base">Tiêu chuẩn</th>
@@ -176,6 +156,7 @@ const ViewProduct = () => {
                       className="hover:bg-[rgb(255, 250, 240)] transition-colors"
                     >
                       <td className="text-left text-sm p-2">{index + 1}</td>
+                      <td className="text-left text-sm p-2">{product[0]}</td>
                       <td className="text-left text-sm p-2">{product[1]}</td>
                       <td className="text-left text-sm p-2">{product[3]}</td>
                       <td className="text-left text-sm p-2">{product[6]}</td>
@@ -184,19 +165,15 @@ const ViewProduct = () => {
                       <td className="text-left text-sm p-2">{product[7]}</td>
                       <td className="text-left text-sm p-2">{product[8]}</td>
                       <td className="text-left text-sm p-2">
-                        {parseInt(product[9]) === 0 ? (
-                          isAdmin && (
-                            <div className="button-group">
-                              <button className="button-approve" onClick={() => handleApprove(product[3], product[0])} > 
-                                Duyệt 
-                              </button>
-                              <button className="button-delete" onClick={() => handleDelete(product[3], product[0])} >
-                                Xóa
-                              </button>
-                            </div>
-                          )
-                        ) : (
-                          <span className="da-duyet">Đã duyệt</span>
+                        {isAdmin && (
+                          <div className="button-group">
+                            <button className="button-approve" onClick={() => handleApprove(product[3], product[0])} > 
+                              Duyệt 
+                            </button>
+                            <button className="button-delete" onClick={() => handleDelete(product[3], product[0])} >
+                              Xóa
+                            </button>
+                          </div>
                         )}
                       </td>
                     </tr>
@@ -209,4 +186,5 @@ const ViewProduct = () => {
     </div>
   );
 };
+
 export default ViewProduct;

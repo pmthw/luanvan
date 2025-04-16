@@ -3,8 +3,13 @@ import Web3 from 'web3';
 import { useNavigate } from 'react-router-dom';
 import QuanLyUserContract from '../contracts/QuanLyUser.json';
 import { Helmet } from 'react-helmet-async';
-import removeAccents from 'remove-accents'; 
+import removeAccents from 'remove-accents';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css'; 
 import '../css/user.css';
+import logo_bct from '../img/logo_bct.png';
+import ProductAwaiting from './ProductAwaiting';
+import ViewProduct from './ProductAwaiting';
 
 const Admin = () => {
   const [username, setUsername] = useState('');
@@ -17,6 +22,7 @@ const Admin = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showAddUser, setShowAddUser] = useState(true);
   const [showUserList, setShowUserList] = useState(false);
+  const [showViewProduct, setShowViewProduct]=useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -164,11 +170,18 @@ const Admin = () => {
   const toggleAddUser = () => {
     setShowAddUser(true);
     setShowUserList(false);
+    setShowViewProduct(false);
   };
 
   const toggleUserList = () => {
     setShowAddUser(false);
     setShowUserList(true);
+    setShowViewProduct(false);
+  };
+  const toggleViewProducts = () => {
+    setShowAddUser(false);
+    setShowUserList(false);
+    setShowViewProduct(true);
   };
 
   const handleViewUserInfo = async (username) => {
@@ -235,115 +248,243 @@ const Admin = () => {
   };
 
   return (
-    <div className="user-container">
+    <div className="d-flex" id="admin-wrapper">
       <Helmet>
-        <title>Admin</title>
+        <title>Quản Lý Tài Khoản</title>
       </Helmet>
-      <button className="logout-button bi-box-arrow-right" onClick={handleLogout}> Đăng xuất</button>
-      <div className="sidebar">
-        <h2 className="sidebar-h2">BỘ CÔNG THƯƠNG</h2>
-        <ul>
-          <li><a className="bi-house-add-fill" href="#" onClick={toggleAddUser}> Thêm Tài Khoản</a></li>
-          <li><a className="bi-card-list" href="#" onClick={toggleUserList}> Danh Sách Tài Khoản</a></li>
-        </ul>
-        <div class="social-links">
-          <a href="https://www.facebook.com/share/g/1HBKyfjahu/" className="bi-icon bi-facebook" target="_blank" rel="noopener noreferrer">
+
+      {/* Sidebar */}
+      <div className="sidebar" id="sidebar-wrapper" style={{ backgroundColor: "#FFA726" }}>
+        <div className="logo-bct text-center py-3">
+        <img src={logo_bct} alt="Logo Bộ Công Thương" className="logo_bct" style={{ width: "100px", height: "auto" }} />
+        </div>
+        <div className="sidebar-heading text-center py-3 text-white fs-5 fw-bold border-bottom">
+          <span>BỘ CÔNG THƯƠNG</span>
+        </div>
+        <div className="list-group list-group-flush my-3">
+          <a href="#" 
+            className={`list-group-item list-group-item-action bg-transparent text-white ${showAddUser ? 'active' : ''}`} 
+            onClick={toggleAddUser}>
+            <i className="bi bi-person-plus-fill me-2"></i>Thêm Tài Khoản
           </a>
-          <a href="https://youtu.be/qYI0CPTt6mc?si=8-F8jskP6eZP6xog" className="bi-icon bi-youtube" target="_blank" rel="noopener noreferrer">
+          <a href="#" 
+            className={`list-group-item list-group-item-action bg-transparent text-white ${showUserList ? 'active' : ''}`} 
+            onClick={toggleUserList}>
+            <i className="bi bi-card-list me-2"></i>Danh Sách Tài Khoản
           </a>
-          <a href="https://vi.wikipedia.org/wiki/N%C6%B0%E1%BB%9Bc_m%E1%BA%AFm_Ph%C3%BA_Qu%E1%BB%91c" className="bi-icon bi-google"target="_blank" rel="noopener noreferrer">
+          <a href="#" 
+            className={`list-group-item list-group-item-action bg-transparent text-white ${showUserList ? 'active' : ''}`} 
+            onClick={toggleViewProducts}>
+            <i className="bi bi-card-list me-2"></i>Sản phẩm chờ duyệt
+          </a>
+        </div>
+        <div className="social-links text-center mt-auto mb-4">
+          <a href="https://youtu.be/_OtEvHS_dhE?si=9bTrVJAD1uyW1hqN" className="text-white mx-2" target="_blank" rel="noopener noreferrer">
+            <i className="bi bi-youtube fs-5"></i>
+          </a>
+          <a href="https://vi.wikipedia.org/wiki/Qu%C3%BDt_h%E1%BB%93ng" className="text-white mx-2" target="_blank" rel="noopener noreferrer">
+            <i className="bi bi-google fs-5"></i>
           </a>
         </div>
       </div>
 
-      <div className="content">
-        {showAddUser && (
-          <div className="add-user-form">
-            <h1>Thêm Tài Khoản</h1>
-            <div className="form-row">
-            <div className="form-column">
-              <label className="admin-label">Email</label>
-              <input type="email" placeholder="Nhập email" value={username} onChange={(e) => setUsername(e.target.value)}/>
+      {/* Page Content */}
+      <div id="page-content-wrapper">
+        {/* Navbar */}
+        <nav className="navbar navbar-expand-lg px-4">
+          <div className="d-flex align-items-center">
+            <h2 className="fs-4 m-0">{showAddUser ? 'Thêm Tài Khoản' : 'Danh Sách Tài Khoản'}</h2>
+          </div>
+        < button className="btn btn-outline-danger ms-auto d-flex align-items-center" 
+        onClick={handleLogout}
+        > 
+        <i className="bi bi-box-arrow-right me-2"></i>
+        Đăng xuất
+        </button>
+      </nav>
 
-              <label className="admin-label">Nông Hộ Sản Xuất</label>
-              <input type="text" placeholder="Nhập nông hộ sản xuất" value={nonghoSX} onChange={(e) => setNongHoSX(e.target.value)}/>
-              
-              <label className="admin-label">Địa chỉ</label>
-              <input type="text" placeholder="Nhập địa chỉ" value={diaChi} onChange={(e) => setDiaChi(e.target.value)}/>
-
+        {/* Content */}
+        <div className="container-fluid px-4">
+          {showAddUser && (
+            <div className="card shadow border-0 mb-4">
+              <div className="card-header bg-primary text-white">
+                <h5 className="m-0">Thông tin tài khoản mới</h5>
               </div>
-              <div className="form-column">
+              <div className="card-body">
+                <form>
+                  <div className="row mb-3">
+                    <div className="col-md-6">
+                      <div className="form-floating mb-3">
+                        <input 
+                          type="email" 
+                          className="form-control" 
+                          id="floatingEmail" 
+                          placeholder="name@example.com"
+                          value={username}
+                          autoComplete="off"  
+                          onChange={(e) => setUsername(e.target.value)}
+                        />
+                        <label htmlFor="floatingEmail">Email</label>
+                      </div>
+                      <div className="form-floating mb-3">
+                        <input 
+                          type="text" 
+                          className="form-control" 
+                          id="floatingNongHo" 
+                          placeholder="Nông hộ sản xuất"
+                          value={nonghoSX}
+                          autoComplete="off"  
+                          onChange={(e) => setNongHoSX(e.target.value)}
+                        />
+                        <label htmlFor="floatingNongHo">Nông Hộ Sản Xuất</label>
+                      </div>
+                      <div className="form-floating mb-3">
+                        <input 
+                          type="text" 
+                          className="form-control" 
+                          id="floatingAddress" 
+                          placeholder="Địa chỉ"
+                          value={diaChi}
+                          autoComplete="off"  
+                          onChange={(e) => setDiaChi(e.target.value)}
+                        />
+                        <label htmlFor="floatingAddress">Địa chỉ</label>
+                      </div>
+                    </div>
+                    <div className="col-md-6">
+                      <div className="form-floating mb-3">
+                        <input 
+                          type="text" 
+                          className="form-control" 
+                          id="floatingPhone" 
+                          placeholder="Số điện thoại"
+                          value={sdt}
+                          autoComplete="off"  
+                          onChange={(e) => setSdt(e.target.value)}
+                        />
+                        <label htmlFor="floatingPhone">Số Điện Thoại</label>
+                      </div>
+                      <div className="form-floating mb-3">
+                        <input 
+                          type="password" 
+                          className="form-control" 
+                          id="floatingPassword" 
+                          placeholder="Mật khẩu"
+                          value={password}
+                          autoComplete="off"  
+                          onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <label htmlFor="floatingPassword">Mật Khẩu</label>
+                      </div>
+                      <div className="form-floating mb-3">
+                        <input 
+                          type="password" 
+                          className="form-control" 
+                          id="floatingConfirmPassword" 
+                          placeholder="Nhập lại mật khẩu"
+                          value={confirmPassword}
+                          autoComplete="off"  
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                        />
+                        <label htmlFor="floatingConfirmPassword">Nhập Lại Mật Khẩu</label>
+                      </div>
+                    </div>
+                  </div>
+                  {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
+                  <div className="d-grid gap-2 col-6 mx-auto">
+                  <button type="button" 
+                    className="btn btn-add-user py-3" 
+                    onClick={handleAddUser}>
+                    <i className="bi bi-person-plus-fill me-2"></i>
+                    Thêm Tài Khoản
+                  </button>
 
-              <label className="admin-label">Số Điện Thoại</label>
-              <input type="text" placeholder="Nhập số điện thoại" value={sdt} onChange={(e) => setSdt(e.target.value)}/>
-
-              <label className="admin-label">Mật Khẩu</label>
-              <input type="password" placeholder="Nhập mật khẩu" value={password} onChange={(e) => setPassword(e.target.value)}/>
-
-              <label className="admin-label">Nhập Lại Mật Khẩu</label>
-              <input type="password" placeholder="Nhập lại mật khẩu" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}/>
+                  </div>
+                </form>
               </div>
             </div>
-            <button onClick={handleAddUser} className="btn btn-primary mb-4">Thêm</button>
-            {errorMessage && <p className="admin-danger">{errorMessage}</p>}
-          </div>
-        )}
+          )}
 
-        {showUserList && (
-          <div className="fade-in">
-            <h1 className="list-user-h1">Danh Sách Tài Khoản</h1>
-            {userList.length > 0 ? (
-              <table className="product-table">
-                <thead>
-                  <tr>
-                    <th>Cơ Sở Sản Xuất</th>
-                    <th>Email</th>
-                    <th>Thao Tác</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {userList
-                    .sort((a, b) => a.nonghoSX.localeCompare(b.nonghoSX)) // Sắp xếp theo thứ tự chữ cái
-                    .map((user, index) => (
-                      <tr key={index}>
-                        <td>{user.nonghoSX}</td>
-                        <td>{user.username}</td>
-                        <td>
-                          <button
-                            className="btn btn-success btn-sm btn-margin-right bi-search"
-                            onClick={() => handleViewUserInfo(user.username)}
-                          >
-                            Xem Thông Tin
-                          </button>
-                          <button
-                            className="btn btn-info btn-sm btn-margin-right bi-card-list"
-                            onClick={() => handleViewProducts(user.nonghoSX)}
-                          >
-                            Danh Sách Sản Phẩm
-                          </button>
-                          <button
-                            className="btn btn-success btn-sm btn-margin-right bi-key-fill"
-                            onClick={() => handleResetPassword(user.username)}
-                          >
-                            Cấp Lại Mật Khẩu
-                          </button>
-                          <button
-                            className="btn btn-danger btn-sm btn-margin-right bi-trash3-fill"
-                            onClick={() => handleRemoveUser(user.username)}
-                          >
-                            Xóa Tài Khoản
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            ) : (
-              <p className="text-white">Chưa có tài khoản nào được tạo!</p>
-            )}
-          </div>
-        )}
+          {showUserList && (
+            <div className="card shadow border-0" >
+              <div className="card-header bg-primary text-white">
+                <h5 className="m-0">Danh sách tài khoản người dùng</h5>
+              </div>
+              <div className="card-body">
+                {userList.length > 0 ? (
+                  <div className="table-responsive">
+                    <table className="table table-hover align-middle">
+                      <thead className="table-light">
+                        <tr>
+                        <th scope="col" style={{ backgroundColor: "#f3be63", color: "white" }}>Cơ Sở Sản Xuất</th>
+                          <th scope="col" style={{ backgroundColor: "#f3be63", color: "white" }}>Email</th>
+                          <th scope="col" className="text-center" style={{ backgroundColor: "#f3be63", color: "white" }}>Thao Tác</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {userList
+                          .sort((a, b) => {
+                            const nameA = removeAccents(a.nonghoSX.toLowerCase());
+                            const nameB = removeAccents(b.nonghoSX.toLowerCase());
+                            return nameA.localeCompare(nameB);
+                          })
+                          .map((user, index) => (
+                            <tr key={index}>
+                              <td>{user.nonghoSX}</td>
+                              <td>{user.username}</td>
+                              <td>
+                                <div className="d-flex justify-content-center gap-2">
+                                  <button
+                                    className="btn btn-outline-primary btn-sm"
+                                    onClick={() => handleViewUserInfo(user.username)}
+                                    title="Xem Thông Tin"
+                                  >
+                                    <i className="bi bi-search"></i>
+                                  </button>
+                                  <button
+                                    className="btn btn-outline-info btn-sm"
+                                    onClick={() => handleViewProducts(user.nonghoSX)}
+                                    title="Danh Sách Sản Phẩm"
+                                  >
+                                    <i className="bi bi-card-list"></i>
+                                  </button>
+                                  <button
+                                    className="btn btn-outline-warning btn-sm"
+                                    onClick={() => handleResetPassword(user.username)}
+                                    title="Cấp Lại Mật Khẩu"
+                                  >
+                                    <i className="bi bi-key-fill"></i>
+                                  </button>
+                                  <button
+                                    className="btn btn-outline-danger btn-sm"
+                                    onClick={() => handleRemoveUser(user.username)}
+                                    title="Xóa Tài Khoản"
+                                  >
+                                    <i className="bi bi-trash3-fill"></i>
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="text-center py-5">
+                    <i className="bi bi-exclamation-circle fs-1 text-muted"></i>
+                    <p className="mt-3 text-muted">Chưa có tài khoản nào được tạo!</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
+          {
+            showViewProduct && (
+              <ProductAwaiting toggleViewProducts ={toggleViewProducts}/>
+            )
+          }
+        </div>
       </div>
     </div>
   );
